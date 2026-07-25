@@ -1,0 +1,24 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - flashduel_mongo_data:/data/db
+
+  api:
+    build: ./backend
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      MONGO_URI: mongodb://mongo:27017/flashduel
+      JWT_SECRET: ${JWT_SECRET:-dev_only_change_me}
+      CLIENT_ORIGIN: "*"
+    depends_on:
+      - mongo
+
+volumes:
+  flashduel_mongo_data:
